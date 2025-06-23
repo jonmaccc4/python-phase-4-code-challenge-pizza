@@ -28,7 +28,7 @@ class Restaurants(Resource):
             "address": r.address
         } for r in Restaurant.query.all()]
         return restaurants, 200
-
+    
 class RestaurantById(Resource):
     def get(self, id):
         restaurant = db.session.get(Restaurant, id)
@@ -39,11 +39,14 @@ class RestaurantById(Resource):
             "id": restaurant.id,
             "name": restaurant.name,
             "address": restaurant.address,
-            "pizzas": [{
-                "id": rp.pizza.id,
-                "name": rp.pizza.name,
-                "ingredients": rp.pizza.ingredients,
-                "price": rp.price
+            "restaurant_pizzas": [{
+                "id": rp.id,
+                "price": rp.price,
+                "pizza": {
+                    "id": rp.pizza.id,
+                    "name": rp.pizza.name,
+                    "ingredients": rp.pizza.ingredients
+                }
             } for rp in restaurant.restaurant_pizzas]
         }, 200
 
@@ -71,7 +74,7 @@ class RestaurantPizzas(Resource):
         data = request.get_json()
         try:
             if not 1 <= data['price'] <= 30:
-                raise ValueError("Price must be between 1 and 30")
+                raise ValueError("validation errors")  # Change this line
                 
             rp = RestaurantPizza(
                 price=data['price'],
@@ -84,6 +87,8 @@ class RestaurantPizzas(Resource):
             return {
                 "id": rp.id,
                 "price": rp.price,
+                "pizza_id": rp.pizza_id,
+                "restaurant_id": rp.restaurant_id,
                 "pizza": {
                     "id": rp.pizza.id,
                     "name": rp.pizza.name,
