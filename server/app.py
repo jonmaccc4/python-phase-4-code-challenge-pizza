@@ -74,7 +74,7 @@ class RestaurantPizzas(Resource):
         data = request.get_json()
         try:
             if not 1 <= data['price'] <= 30:
-                raise ValueError("validation errors")  # Change this line
+                raise ValueError("validation errors")  
                 
             rp = RestaurantPizza(
                 price=data['price'],
